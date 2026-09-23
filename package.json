@@ -1,0 +1,10 @@
+{
+  "name": "currency-calculator",
+  "private": true,
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "dev": "npm run dev --workspace=@currency-calculator/web",
+    "build": "npm run build --workspace=@currency-calculator/web && npm run build --workspace=@currency-calculator/worker",
+    "test": "npm run test --workspace=@currency-calculator/worker"
+  }
+}
