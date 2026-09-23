@@ -3,13 +3,22 @@ import { computed, onMounted, ref, watch } from "vue";
 
 const allCodes = ["USD", "GEL", "RUB", "EUR", "GBP", "PLN", "IDR"] as const;
 type Code = (typeof allCodes)[number];
+type Language = "en" | "ru";
 type Snapshot = { rates: Record<Code, number>; effectiveDate: string; fetchedAt: string; source: string; stale: boolean };
-const names: Record<Code, string> = { USD: "US Dollar", GEL: "Georgian Lari", RUB: "Russian Ruble", EUR: "Euro", GBP: "British Pound", PLN: "Polish Zloty", IDR: "Indonesian Rupiah" };
-const stored = JSON.parse(localStorage.getItem("currency-preferences") ?? "{}") as { order?: Code[]; hidden?: Code[]; decimalSeparator?: "." | ","; groupSeparator?: " " | "." | "," | "" };
+const names: Record<Language, Record<Code, string>> = {
+  en: { USD: "US Dollar", GEL: "Georgian Lari", RUB: "Russian Ruble", EUR: "Euro", GBP: "British Pound", PLN: "Polish Zloty", IDR: "Indonesian Rupiah" },
+  ru: { USD: "Доллар США", GEL: "Грузинский лари", RUB: "Российский рубль", EUR: "Евро", GBP: "Фунт стерлингов", PLN: "Польский злотый", IDR: "Индонезийская рупия" },
+};
+const copy = {
+  en: { title: "Currency Converter", clear: "Clear amount", settings: "Open currency settings", loading: "Loading official rates…", unavailable: "Rates are not available yet.", failed: "Could not load exchange rates.", retry: "Try again", stale: "Showing the last available rates.", values: "Currency values", amount: "Currency amount", rates: "Rates", currencies: "Currencies", choose: "Choose the rows to show and their order.", decimal: "Decimal separator", thousands: "Thousands separator", language: "Language", comma: "Comma (,)", dot: "Dot (.)", space: "Space", none: "None", english: "English", russian: "Русский", moveUp: "Move up", moveDown: "Move down" },
+  ru: { title: "Конвертер валют", clear: "Очистить сумму", settings: "Открыть настройки валют", loading: "Загрузка официальных курсов…", unavailable: "Курсы пока недоступны.", failed: "Не удалось загрузить курсы.", retry: "Повторить", stale: "Показаны последние доступные курсы.", values: "Значения валют", amount: "Сумма в валюте", rates: "Курсы", currencies: "Валюты", choose: "Выберите отображаемые валюты и их порядок.", decimal: "Десятичный разделитель", thousands: "Разделитель тысяч", language: "Язык", comma: "Запятая (,)", dot: "Точка (.)", space: "Пробел", none: "Нет", english: "English", russian: "Русский", moveUp: "Выше", moveDown: "Ниже" },
+} as const;
+const stored = JSON.parse(localStorage.getItem("currency-preferences") ?? "{}") as { order?: Code[]; hidden?: Code[]; decimalSeparator?: "." | ","; groupSeparator?: " " | "." | "," | ""; language?: Language };
 const order = ref<Code[]>(stored.order?.filter((code) => allCodes.includes(code)) ?? [...allCodes]);
 const hidden = ref<Code[]>(stored.hidden ?? []);
 const decimalSeparator = ref<"." | ",">(stored.decimalSeparator ?? ",");
 const groupSeparator = ref<" " | "." | "," | "">(stored.groupSeparator ?? " ");
+const language = ref<Language>(stored.language ?? "en");
 const selected = ref<Code>("USD");
 const rawAmount = ref("1");
 const rates = ref<Snapshot | null>(null);
@@ -19,7 +28,8 @@ const settingsOpen = ref(false);
 
 const amount = computed(() => Number(rawAmount.value.replace(",", ".")) || 0);
 const visible = computed(() => order.value.filter((code) => !hidden.value.includes(code)));
-const locale = "en-US";
+const locale = computed(() => language.value === "ru" ? "ru-RU" : "en-US");
+function t(key: keyof typeof copy.en) { return copy[language.value][key]; }
 function format(value: number, _code: Code) {
   const plain = new Intl.NumberFormat("en-US", { useGrouping: false, maximumFractionDigits: 2, minimumFractionDigits: 0 }).format(value);
   const [whole, fractional] = plain.split(".");
@@ -81,31 +91,32 @@ async function load() {
   try {
     const base = import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ?? "";
     const response = await fetch(`${base}/api/rates`);
-    if (!response.ok) throw new Error(response.status === 503 ? "Rates are not available yet." : "Could not load exchange rates.");
+    if (!response.ok) throw new Error(response.status === 503 ? t("unavailable") : t("failed"));
     rates.value = await response.json();
-  } catch (cause) { error.value = cause instanceof Error ? cause.message : "Could not load exchange rates."; }
+  } catch (cause) { error.value = cause instanceof Error ? cause.message : t("failed"); }
   finally { loading.value = false; }
 }
-watch([order, hidden, decimalSeparator, groupSeparator], () => localStorage.setItem("currency-preferences", JSON.stringify({ order: order.value, hidden: hidden.value, decimalSeparator: decimalSeparator.value, groupSeparator: groupSeparator.value })), { deep: true });
+watch([order, hidden, decimalSeparator, groupSeparator, language], () => localStorage.setItem("currency-preferences", JSON.stringify({ order: order.value, hidden: hidden.value, decimalSeparator: decimalSeparator.value, groupSeparator: groupSeparator.value, language: language.value })), { deep: true });
+watch(language, () => { document.title = t("title"); }, { immediate: true });
 onMounted(load);
 </script>
 
 <template>
   <main class="calculator">
-    <header><span class="eyebrow">Currency Converter</span><span class="header-actions"><button class="clear-top" aria-label="Clear amount" @click="clearAmount">AC</button><button class="settings" aria-label="Open currency settings" @click="settingsOpen = true">☰</button></span></header>
-    <section v-if="loading" class="state">Loading official rates…</section>
-    <section v-else-if="error" class="state error"><p>{{ error }}</p><button @click="load">Try again</button></section>
+    <header><span class="eyebrow">{{ t("title") }}</span><span class="header-actions"><button class="clear-top" :aria-label="t('clear')" @click="clearAmount">AC</button><button class="settings" :aria-label="t('settings')" @click="settingsOpen = true">☰</button></span></header>
+    <section v-if="loading" class="state">{{ t("loading") }}</section>
+    <section v-else-if="error" class="state error"><p>{{ error }}</p><button @click="load">{{ t("retry") }}</button></section>
     <template v-else-if="rates">
-      <p v-if="rates.stale" class="warning">Showing the last available rates.</p>
-      <section class="rows" aria-label="Currency values">
+      <p v-if="rates.stale" class="warning">{{ t("stale") }}</p>
+      <section class="rows" :aria-label="t('values')">
         <article v-for="code in visible" :key="code" class="currency-row" :class="{ selected: code === selected }">
           <span class="code">{{ code }}</span>
-          <input class="amount" type="text" inputmode="decimal" aria-label="Currency amount" :value="code === selected ? displayedRawAmount() : value(code)" @focus="focusAmount(code, $event)" @input="updateAmount(code, $event)" />
-          <span class="name">{{ names[code] }}</span>
+          <input class="amount" type="text" inputmode="decimal" :aria-label="t('amount')" :value="code === selected ? displayedRawAmount() : value(code)" @focus="focusAmount(code, $event)" @input="updateAmount(code, $event)" />
+          <span class="name">{{ names[language][code] }}</span>
         </article>
       </section>
-      <p class="source">Rates: {{ rates.source }} · {{ new Date(rates.effectiveDate).toLocaleDateString(locale) }}</p>
+      <p class="source">{{ t("rates") }}: {{ rates.source }} · {{ new Date(rates.effectiveDate).toLocaleDateString(locale) }}</p>
     </template>
   </main>
-  <div v-if="settingsOpen" class="modal-backdrop" @click.self="settingsOpen = false"><section class="modal"><header><h2>Currencies</h2><button @click="settingsOpen = false">×</button></header><p>Choose the rows to show and their order.</p><div class="format-settings"><label>Decimal separator<select v-model="decimalSeparator"><option value=",">Comma (,)</option><option value=".">Dot (.)</option></select></label><label>Thousands separator<select v-model="groupSeparator"><option value=" ">Space</option><option value=",">Comma (,)</option><option value=".">Dot (.)</option><option value="">None</option></select></label></div><div v-for="code in order" :key="code" class="setting-row"><label><input type="checkbox" :checked="!hidden.includes(code)" @change="toggle(code)"/> {{ code }} — {{ names[code] }}</label><span><button aria-label="Move up" @click="move(code, -1)">↑</button><button aria-label="Move down" @click="move(code, 1)">↓</button></span></div></section></div>
+  <div v-if="settingsOpen" class="modal-backdrop" @click.self="settingsOpen = false"><section class="modal"><header><h2>{{ t("currencies") }}</h2><button @click="settingsOpen = false">×</button></header><p>{{ t("choose") }}</p><div class="format-settings"><label>{{ t("language") }}<select v-model="language"><option value="en">{{ t("english") }}</option><option value="ru">{{ t("russian") }}</option></select></label><label>{{ t("decimal") }}<select v-model="decimalSeparator"><option value=",">{{ t("comma") }}</option><option value=".">{{ t("dot") }}</option></select></label><label>{{ t("thousands") }}<select v-model="groupSeparator"><option value=" ">{{ t("space") }}</option><option value=",">{{ t("comma") }}</option><option value=".">{{ t("dot") }}</option><option value="">{{ t("none") }}</option></select></label></div><div v-for="code in order" :key="code" class="setting-row"><label><input type="checkbox" :checked="!hidden.includes(code)" @change="toggle(code)"/> {{ code }} — {{ names[language][code] }}</label><span><button :aria-label="t('moveUp')" @click="move(code, -1)">↑</button><button :aria-label="t('moveDown')" @click="move(code, 1)">↓</button></span></div></section></div>
 </template>
