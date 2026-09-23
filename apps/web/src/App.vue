@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
 const allCodes = ["USD", "GEL", "RUB", "EUR", "GBP", "PLN", "IDR"] as const;
 type Code = (typeof allCodes)[number];
@@ -31,12 +31,13 @@ function select(code: Code) {
   selected.value = code;
   rawAmount.value = String(Number(next.toFixed(2)));
 }
-async function focusAmount(code: Code, event: FocusEvent) {
+function focusAmount(code: Code, event: FocusEvent) {
   select(code);
-  await nextTick();
   const input = event.target as HTMLInputElement;
-  const position = input.value.length;
-  input.setSelectionRange(position, position);
+  requestAnimationFrame(() => {
+    const position = input.value.length;
+    input.setSelectionRange(position, position);
+  });
 }
 function clearAmount() {
   rawAmount.value = "0";
@@ -74,7 +75,7 @@ onMounted(load);
 
 <template>
   <main class="calculator">
-    <header><span class="eyebrow">Currency</span><span class="header-actions"><button class="clear-top" aria-label="Clear amount" @click="clearAmount">AC</button><button class="settings" aria-label="Open currency settings" @click="settingsOpen = true">☰</button></span></header>
+    <header><span class="eyebrow">Currency Converter</span><span class="header-actions"><button class="clear-top" aria-label="Clear amount" @click="clearAmount">AC</button><button class="settings" aria-label="Open currency settings" @click="settingsOpen = true">☰</button></span></header>
     <section v-if="loading" class="state">Loading official rates…</section>
     <section v-else-if="error" class="state error"><p>{{ error }}</p><button @click="load">Try again</button></section>
     <template v-else-if="rates">
