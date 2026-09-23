@@ -69,6 +69,10 @@ function updateAmount(code: Code, event: Event) {
   if (selected.value !== code) selected.value = code;
   rawAmount.value = next;
 }
+function applyAmount(code: Code, event: KeyboardEvent) {
+  updateAmount(code, event);
+  (event.target as HTMLInputElement).blur();
+}
 function move(code: Code, direction: -1 | 1) {
   const index = order.value.indexOf(code), target = index + direction;
   if (target < 0 || target >= order.value.length) return;
@@ -111,7 +115,7 @@ onMounted(load);
       <section class="rows" :aria-label="t('values')">
         <article v-for="code in visible" :key="code" class="currency-row" :class="{ selected: code === selected }">
           <span class="code">{{ code }}</span>
-          <input class="amount" type="text" inputmode="decimal" :aria-label="t('amount')" :value="code === selected ? displayedRawAmount() : value(code)" @focus="focusAmount(code, $event)" @input="updateAmount(code, $event)" />
+          <input class="amount" type="text" inputmode="decimal" :aria-label="t('amount')" :value="code === selected ? displayedRawAmount() : value(code)" @focus="focusAmount(code, $event)" @input="updateAmount(code, $event)" @keydown.enter.prevent="applyAmount(code, $event)" />
           <span class="name">{{ names[language][code] }}</span>
         </article>
       </section>
