@@ -10,8 +10,8 @@ const names: Record<Language, Record<Code, string>> = {
   ru: { USD: "Доллар США", GEL: "Грузинский лари", RUB: "Российский рубль", EUR: "Евро", GBP: "Фунт стерлингов", PLN: "Польский злотый", IDR: "Индонезийская рупия" },
 };
 const copy = {
-  en: { title: "Currency Converter", clear: "Clear amount", settings: "Open currency settings", loading: "Loading official rates…", unavailable: "Rates are not available yet.", failed: "Could not load exchange rates.", retry: "Try again", stale: "Showing the last available rates.", values: "Currency values", amount: "Currency amount", rates: "Rates", currencies: "Currencies", choose: "Choose the rows to show and their order.", decimal: "Decimal separator", thousands: "Thousands separator", language: "Language", comma: "Comma (,)", dot: "Dot (.)", space: "Space", none: "None", english: "English", russian: "Русский", moveUp: "Move up", moveDown: "Move down" },
-  ru: { title: "Конвертер валют", clear: "Очистить сумму", settings: "Открыть настройки валют", loading: "Загрузка официальных курсов…", unavailable: "Курсы пока недоступны.", failed: "Не удалось загрузить курсы.", retry: "Повторить", stale: "Показаны последние доступные курсы.", values: "Значения валют", amount: "Сумма в валюте", rates: "Курсы", currencies: "Валюты", choose: "Выберите отображаемые валюты и их порядок.", decimal: "Десятичный разделитель", thousands: "Разделитель тысяч", language: "Язык", comma: "Запятая (,)", dot: "Точка (.)", space: "Пробел", none: "Нет", english: "English", russian: "Русский", moveUp: "Выше", moveDown: "Ниже" },
+  en: { title: "Currency Converter", clear: "Clear amount", settings: "Open currency settings", settingsTitle: "Settings", numberFormat: "Number format", loading: "Loading official rates…", unavailable: "Rates are not available yet.", failed: "Could not load exchange rates.", retry: "Try again", stale: "Showing the last available rates.", values: "Currency values", amount: "Currency amount", rates: "Rates", currencies: "Currencies", choose: "Choose the rows to show and their order.", decimal: "Decimal separator", thousands: "Thousands separator", language: "Language", comma: "Comma (,)", dot: "Dot (.)", space: "Space", none: "None", english: "English", russian: "Русский", moveUp: "Move up", moveDown: "Move down" },
+  ru: { title: "Конвертер валют", clear: "Очистить сумму", settings: "Открыть настройки валют", settingsTitle: "Настройки", numberFormat: "Формат чисел", loading: "Загрузка официальных курсов…", unavailable: "Курсы пока недоступны.", failed: "Не удалось загрузить курсы.", retry: "Повторить", stale: "Показаны последние доступные курсы.", values: "Значения валют", amount: "Сумма в валюте", rates: "Курсы", currencies: "Валюты", choose: "Выберите отображаемые валюты и их порядок.", decimal: "Десятичный разделитель", thousands: "Разделитель тысяч", language: "Язык", comma: "Запятая (,)", dot: "Точка (.)", space: "Пробел", none: "Нет", english: "English", russian: "Русский", moveUp: "Выше", moveDown: "Ниже" },
 } as const;
 const stored = JSON.parse(localStorage.getItem("currency-preferences") ?? "{}") as { order?: Code[]; hidden?: Code[]; decimalSeparator?: "." | ","; groupSeparator?: " " | "." | "," | ""; language?: Language };
 const order = ref<Code[]>(stored.order?.filter((code) => allCodes.includes(code)) ?? [...allCodes]);
@@ -103,7 +103,7 @@ onMounted(load);
 
 <template>
   <main class="calculator">
-    <header><span class="eyebrow">{{ t("title") }}</span><span class="header-actions"><button class="clear-top" :aria-label="t('clear')" @click="clearAmount">AC</button><button class="settings" :aria-label="t('settings')" @click="settingsOpen = true">☰</button></span></header>
+    <header><span class="eyebrow">{{ t("title") }}</span><span class="header-actions"><button class="clear-top" :aria-label="t('clear')" @click="clearAmount">AC</button><button class="settings" :aria-label="t('settings')" @click="settingsOpen = true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.25a3.75 3.75 0 1 0 0 7.5 3.75 3.75 0 0 0 0-7.5Zm8.03 4.61 1.58-1.23-1.87-3.24-1.9.77a8.1 8.1 0 0 0-1.53-.89l-.29-2.03h-3.74l-.29 2.03c-.54.22-1.05.52-1.53.89l-1.9-.77-1.87 3.24 1.58 1.23a7.8 7.8 0 0 0 0 1.78l-1.58 1.23 1.87 3.24 1.9-.77c.48.37.99.67 1.53.89l.29 2.03h3.74l.29-2.03c.54-.22 1.05-.52 1.53-.89l1.9.77 1.87-3.24-1.58-1.23c.13-.58.13-1.2 0-1.78Z" /></svg></button></span></header>
     <section v-if="loading" class="state">{{ t("loading") }}</section>
     <section v-else-if="error" class="state error"><p>{{ error }}</p><button @click="load">{{ t("retry") }}</button></section>
     <template v-else-if="rates">
@@ -118,5 +118,21 @@ onMounted(load);
       <p class="source">{{ t("rates") }}: {{ rates.source }} · {{ new Date(rates.effectiveDate).toLocaleDateString(locale) }}</p>
     </template>
   </main>
-  <div v-if="settingsOpen" class="modal-backdrop" @click.self="settingsOpen = false"><section class="modal"><header><h2>{{ t("currencies") }}</h2><button @click="settingsOpen = false">×</button></header><p>{{ t("choose") }}</p><div class="format-settings"><label>{{ t("language") }}<select v-model="language"><option value="en">{{ t("english") }}</option><option value="ru">{{ t("russian") }}</option></select></label><label>{{ t("decimal") }}<select v-model="decimalSeparator"><option value=",">{{ t("comma") }}</option><option value=".">{{ t("dot") }}</option></select></label><label>{{ t("thousands") }}<select v-model="groupSeparator"><option value=" ">{{ t("space") }}</option><option value=",">{{ t("comma") }}</option><option value=".">{{ t("dot") }}</option><option value="">{{ t("none") }}</option></select></label></div><div v-for="code in order" :key="code" class="setting-row"><label><input type="checkbox" :checked="!hidden.includes(code)" @change="toggle(code)"/> {{ code }} — {{ names[language][code] }}</label><span><button :aria-label="t('moveUp')" @click="move(code, -1)">↑</button><button :aria-label="t('moveDown')" @click="move(code, 1)">↓</button></span></div></section></div>
+  <div v-if="settingsOpen" class="modal-backdrop" @click.self="settingsOpen = false">
+    <section class="modal" role="dialog" aria-modal="true" :aria-label="t('settingsTitle')">
+      <header class="modal-header"><h2>{{ t("settingsTitle") }}</h2><button class="close" aria-label="Close" @click="settingsOpen = false">×</button></header>
+      <section class="settings-section">
+        <h3>{{ t("numberFormat") }}</h3>
+        <div class="format-settings">
+          <label class="language-choice">{{ t("language") }}<select v-model="language"><option value="en">{{ t("english") }}</option><option value="ru">{{ t("russian") }}</option></select></label>
+          <label>{{ t("decimal") }}<select v-model="decimalSeparator"><option value=",">{{ t("comma") }}</option><option value=".">{{ t("dot") }}</option></select></label>
+          <label>{{ t("thousands") }}<select v-model="groupSeparator"><option value=" ">{{ t("space") }}</option><option value=",">{{ t("comma") }}</option><option value=".">{{ t("dot") }}</option><option value="">{{ t("none") }}</option></select></label>
+        </div>
+      </section>
+      <section class="settings-section">
+        <h3>{{ t("currencies") }}</h3><p>{{ t("choose") }}</p>
+        <div v-for="code in order" :key="code" class="setting-row"><label><input type="checkbox" :checked="!hidden.includes(code)" @change="toggle(code)"/> <span>{{ code }}<small>{{ names[language][code] }}</small></span></label><span><button :aria-label="t('moveUp')" @click="move(code, -1)">↑</button><button :aria-label="t('moveDown')" @click="move(code, 1)">↓</button></span></div>
+      </section>
+    </section>
+  </div>
 </template>

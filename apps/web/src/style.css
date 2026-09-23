@@ -6,7 +6,9 @@ button { font: inherit; }
 header { display: flex; justify-content: space-between; align-items: center; }
 .eyebrow { font-size: 25px; font-weight: 650; margin-left: 6px; }
 .header-actions { display: flex; align-items: center; gap: 14px; }
-.settings, .modal header button { border: 0; color: #e8e6e7; background: transparent; font-size: 25px; cursor: pointer; }
+.settings { display: grid; place-items: center; width: 38px; height: 38px; padding: 7px; border: 0; border-radius: 12px; color: #e8e6e7; background: transparent; cursor: pointer; }
+.settings:hover { background: #191919; }
+.settings svg { width: 24px; height: 24px; fill: currentColor; }
 .clear-top { min-width: 84px; border: 0; border-radius: 14px; padding: 10px 24px; color: #e1744e; background: #191919; font-size: 17px; cursor: pointer; }
 .rows { margin-top: 34px; }
 .currency-row { position: relative; display: grid; grid-template-columns: 1fr auto; width: 100%; min-height: 90px; padding: 12px 0; color: #ddd; border-radius: 14px; }
@@ -20,14 +22,22 @@ header { display: flex; justify-content: space-between; align-items: center; }
 .state { padding: 90px 0; text-align: center; color: #aaa; }
 .state button { color: #e1744e; background: #191919; border: 0; border-radius: 8px; padding: 10px 15px; cursor: pointer; }
 .error { color: #dd8b78; }
-.modal-backdrop { position: fixed; inset: 0; padding: 18px; display: grid; place-items: center; background: #000a; }
-.modal { width: min(100%, 440px); padding: 20px; border-radius: 18px; background: #1a1a1a; color: #eee; }
-.modal h2 { margin: 0; }
-.modal p { color: #aaa; font-size: 14px; }
-.format-settings { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 18px 0; }
-.format-settings label { display: grid; gap: 6px; color: #aaa; font-size: 12px; }
-.format-settings select { width: 100%; padding: 8px; border: 1px solid #3a3a3a; border-radius: 7px; color: #eee; background: #252525; }
-.setting-row { display: flex; justify-content: space-between; padding: 13px 0; border-bottom: 1px solid #303030; }
-.setting-row label { cursor: pointer; }
-.setting-row button { border: 0; background: #2a2a2a; color: #eee; margin-left: 5px; border-radius: 5px; cursor: pointer; }
+.modal-backdrop { position: fixed; inset: 0; z-index: 10; padding: 18px; display: grid; place-items: center; background: #000b; backdrop-filter: blur(4px); }
+.modal { width: min(100%, 460px); max-height: min(86dvh, 680px); overflow: auto; padding: 0 20px 20px; border: 1px solid #303030; border-radius: 20px; background: #181818; color: #eee; box-shadow: 0 24px 80px #0009; }
+.modal-header { position: sticky; top: 0; z-index: 1; padding: 20px 0 16px; background: #181818; border-bottom: 1px solid #303030; }
+.modal h2 { margin: 0; font-size: 21px; }
+.close { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; color: #ddd; background: #292929; font-size: 24px; cursor: pointer; }
+.settings-section { padding-top: 20px; }
+.settings-section h3 { margin: 0 0 5px; font-size: 14px; color: #eee; }
+.settings-section p { margin: 0 0 12px; color: #969296; font-size: 13px; }
+.format-settings { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.format-settings label { display: grid; gap: 7px; color: #aaa; font-size: 12px; }
+.format-settings .language-choice { grid-column: 1 / -1; }
+.format-settings select { width: 100%; padding: 10px; border: 1px solid #3a3a3a; border-radius: 9px; color: #eee; background: #252525; font: inherit; }
+.setting-row { display: flex; justify-content: space-between; align-items: center; min-height: 59px; border-bottom: 1px solid #303030; }
+.setting-row label { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.setting-row input { width: 17px; height: 17px; accent-color: #e1744e; }
+.setting-row label span { display: grid; gap: 2px; font-size: 15px; }
+.setting-row small { color: #969296; font-size: 12px; }
+.setting-row button { width: 30px; height: 30px; border: 0; background: #292929; color: #eee; margin-left: 6px; border-radius: 8px; cursor: pointer; }
 @media (max-width: 430px) { .calculator { padding: 26px 20px 20px; } .currency-row { min-height: 82px; } }
