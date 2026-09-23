@@ -13,7 +13,7 @@ Copy `apps/web/.env.example` to `apps/web/.env.local` and set `VITE_API_BASE_URL
 
 ## Deploy
 
-1. Create a Cloudflare KV namespace and replace `REPLACE_WITH_KV_NAMESPACE_ID` in `apps/worker/wrangler.toml`.
+1. Create a Cloudflare KV namespace and set its ID in `apps/worker/wrangler.toml`.
 2. Set `ALLOWED_ORIGINS` to the deployed Pages origin (comma-separated values are supported).
 3. Deploy the Worker with `npm run build --workspace=@currency-calculator/worker` after authenticating Wrangler.
 4. Deploy `apps/web` to Cloudflare Pages using build command `npm run build --workspace=@currency-calculator/web` and output directory `apps/web/dist`; set `VITE_API_BASE_URL` to the Worker URL.
