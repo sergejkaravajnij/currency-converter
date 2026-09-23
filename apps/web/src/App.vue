@@ -56,8 +56,16 @@ function move(code: Code, direction: -1 | 1) {
   [order.value[index], order.value[target]] = [order.value[target], order.value[index]];
 }
 function toggle(code: Code) {
-  if (code === selected.value && !hidden.value.includes(code)) return;
-  hidden.value = hidden.value.includes(code) ? hidden.value.filter((item) => item !== code) : [...hidden.value, code];
+  if (hidden.value.includes(code)) {
+    hidden.value = hidden.value.filter((item) => item !== code);
+    return;
+  }
+  const nextHidden = [...hidden.value, code];
+  if (code === selected.value) {
+    const nextSelected = order.value.find((item) => !nextHidden.includes(item));
+    if (nextSelected) select(nextSelected);
+  }
+  hidden.value = nextHidden;
 }
 async function load() {
   loading.value = true; error.value = "";
@@ -90,5 +98,5 @@ onMounted(load);
       <p class="source">Rates: {{ rates.source }} · {{ new Date(rates.effectiveDate).toLocaleDateString(locale) }}</p>
     </template>
   </main>
-  <div v-if="settingsOpen" class="modal-backdrop" @click.self="settingsOpen = false"><section class="modal"><header><h2>Currencies</h2><button @click="settingsOpen = false">×</button></header><p>Choose the rows to show and their order.</p><div v-for="code in order" :key="code" class="setting-row"><label><input type="checkbox" :checked="!hidden.includes(code)" :disabled="code === selected && !hidden.includes(code)" @change="toggle(code)"/> {{ code }} — {{ names[code] }}</label><span><button aria-label="Move up" @click="move(code, -1)">↑</button><button aria-label="Move down" @click="move(code, 1)">↓</button></span></div></section></div>
+  <div v-if="settingsOpen" class="modal-backdrop" @click.self="settingsOpen = false"><section class="modal"><header><h2>Currencies</h2><button @click="settingsOpen = false">×</button></header><p>Choose the rows to show and their order.</p><div v-for="code in order" :key="code" class="setting-row"><label><input type="checkbox" :checked="!hidden.includes(code)" @change="toggle(code)"/> {{ code }} — {{ names[code] }}</label><span><button aria-label="Move up" @click="move(code, -1)">↑</button><button aria-label="Move down" @click="move(code, 1)">↓</button></span></div></section></div>
 </template>
