@@ -7,9 +7,9 @@ header { display: flex; justify-content: space-between; align-items: center; }
 .eyebrow { font-size: 25px; font-weight: 650; margin-left: 6px; }
 .header-actions { display: flex; align-items: center; gap: 14px; }
 .settings, .modal header button { border: 0; color: #e8e6e7; background: transparent; font-size: 25px; cursor: pointer; }
-.clear-top { min-width: 64px; border: 0; border-radius: 12px; padding: 7px 18px; color: #e1744e; background: #191919; font-size: 15px; cursor: pointer; }
-.rows { margin-top: 42px; }
-.currency-row { position: relative; display: grid; grid-template-columns: 1fr auto; width: 100%; min-height: 104px; padding: 15px 0; color: #ddd; border-radius: 14px; }
+.clear-top { min-width: 84px; border: 0; border-radius: 14px; padding: 10px 24px; color: #e1744e; background: #191919; font-size: 17px; cursor: pointer; }
+.rows { margin-top: 34px; }
+.currency-row { position: relative; display: grid; grid-template-columns: 1fr auto; width: 100%; min-height: 90px; padding: 12px 0; color: #ddd; border-radius: 14px; }
 .currency-row:focus-within, .currency-row:hover { background: #111; padding-left: 10px; padding-right: 10px; }
 .code { align-self: start; font-size: 22px; }
 .amount { width: min(62vw, 340px); align-self: start; padding: 0; border: 0; outline: 0; color: #ddd; background: transparent; font-size: clamp(28px, 8vw, 39px); font-variant-numeric: tabular-nums; text-align: right; }
@@ -27,4 +27,4 @@ header { display: flex; justify-content: space-between; align-items: center; }
 .setting-row { display: flex; justify-content: space-between; padding: 13px 0; border-bottom: 1px solid #303030; }
 .setting-row label { cursor: pointer; }
 .setting-row button { border: 0; background: #2a2a2a; color: #eee; margin-left: 5px; border-radius: 5px; cursor: pointer; }
-@media (max-width: 430px) { .calculator { padding: 26px 20px 20px; } .currency-row { min-height: 91px; } }
+@media (max-width: 430px) { .calculator { padding: 26px 20px 20px; } .currency-row { min-height: 82px; } }
