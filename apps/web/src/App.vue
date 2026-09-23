@@ -120,7 +120,7 @@ onMounted(load);
       <section class="rows" :aria-label="t('values')">
         <article v-for="code in visible" :key="code" class="currency-row" :class="{ selected: code === selected }">
           <span class="code">{{ code }}</span>
-          <input class="amount" type="text" inputmode="decimal" enterkeyhint="done" :aria-label="t('amount')" :value="code === selected ? displayedRawAmount() : value(code)" @focus="focusAmount(code, $event)" @input="updateAmount(code, $event)" @keydown.enter.prevent.stop="applyAmount(code, $event)" />
+          <input class="amount" type="text" inputmode="decimal" enterkeyhint="enter" :aria-label="t('amount')" :value="code === selected ? displayedRawAmount() : value(code)" @focus="focusAmount(code, $event)" @input="updateAmount(code, $event)" @keydown.enter.prevent.stop="applyAmount(code, $event)" />
           <span class="name">{{ names[language][code] }}</span>
         </article>
       </section>
