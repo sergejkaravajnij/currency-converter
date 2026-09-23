@@ -72,11 +72,7 @@ function updateAmount(code: Code, event: Event) {
 function applyAmount(code: Code, event: KeyboardEvent) {
   updateAmount(code, event);
   const input = event.target as HTMLInputElement;
-  requestAnimationFrame(() => {
-    input.focus();
-    const position = input.value.length;
-    input.setSelectionRange(position, position);
-  });
+  input.blur();
 }
 function move(code: Code, direction: -1 | 1) {
   const index = order.value.indexOf(code), target = index + direction;
