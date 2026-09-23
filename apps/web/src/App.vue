@@ -122,9 +122,12 @@ onMounted(load);
     <section class="modal" role="dialog" aria-modal="true" :aria-label="t('settingsTitle')">
       <header class="modal-header"><h2>{{ t("settingsTitle") }}</h2><button class="close" aria-label="Close" @click="settingsOpen = false">×</button></header>
       <section class="settings-section">
+        <h3>{{ t("language") }}</h3>
+        <div class="language-settings"><select v-model="language" :aria-label="t('language')"><option value="en">{{ t("english") }}</option><option value="ru">{{ t("russian") }}</option></select></div>
+      </section>
+      <section class="settings-section">
         <h3>{{ t("numberFormat") }}</h3>
         <div class="format-settings">
-          <label class="language-choice">{{ t("language") }}<select v-model="language"><option value="en">{{ t("english") }}</option><option value="ru">{{ t("russian") }}</option></select></label>
           <label>{{ t("decimal") }}<select v-model="decimalSeparator"><option value=",">{{ t("comma") }}</option><option value=".">{{ t("dot") }}</option></select></label>
           <label>{{ t("thousands") }}<select v-model="groupSeparator"><option value=" ">{{ t("space") }}</option><option value=",">{{ t("comma") }}</option><option value=".">{{ t("dot") }}</option><option value="">{{ t("none") }}</option></select></label>
         </div>
