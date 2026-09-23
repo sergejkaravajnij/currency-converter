@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, nextTick, onMounted, ref, watch } from "vue";
 
 const allCodes = ["USD", "GEL", "RUB", "EUR", "GBP", "PLN", "IDR"] as const;
 type Code = (typeof allCodes)[number];
@@ -30,6 +30,16 @@ function select(code: Code) {
   const next = rates.value ? amount.value * rates.value.rates[selected.value] / rates.value.rates[code] : amount.value;
   selected.value = code;
   rawAmount.value = String(Number(next.toFixed(2)));
+}
+async function focusAmount(code: Code, event: FocusEvent) {
+  select(code);
+  await nextTick();
+  const input = event.target as HTMLInputElement;
+  const position = input.value.length;
+  input.setSelectionRange(position, position);
+}
+function clearAmount() {
+  rawAmount.value = "0";
 }
 function updateAmount(code: Code, event: Event) {
   const input = event.target as HTMLInputElement;
@@ -64,15 +74,15 @@ onMounted(load);
 
 <template>
   <main class="calculator">
-    <header><span class="eyebrow">Currency</span><button class="settings" aria-label="Open currency settings" @click="settingsOpen = true">☰</button></header>
+    <header><span class="eyebrow">Currency</span><span class="header-actions"><button class="clear-top" aria-label="Clear amount" @click="clearAmount">AC</button><button class="settings" aria-label="Open currency settings" @click="settingsOpen = true">☰</button></span></header>
     <section v-if="loading" class="state">Loading official rates…</section>
     <section v-else-if="error" class="state error"><p>{{ error }}</p><button @click="load">Try again</button></section>
     <template v-else-if="rates">
       <p v-if="rates.stale" class="warning">Showing the last available rates.</p>
       <section class="rows" aria-label="Currency values">
         <article v-for="code in visible" :key="code" class="currency-row" :class="{ selected: code === selected }">
-          <span class="code">{{ code }} <i>⌄</i></span>
-          <input class="amount" type="text" inputmode="decimal" aria-label="Currency amount" :value="code === selected ? (rawAmount || '0') : value(code)" @focus="select(code)" @input="updateAmount(code, $event)" />
+          <span class="code">{{ code }}</span>
+          <input class="amount" type="text" inputmode="decimal" aria-label="Currency amount" :value="code === selected ? (rawAmount || '0') : value(code)" @focus="focusAmount(code, $event)" @input="updateAmount(code, $event)" />
           <span class="name">{{ names[code] }}</span>
         </article>
       </section>
