@@ -37,7 +37,7 @@ function format(value: number, _code: Code) {
   return fractional ? `${grouped}${decimalSeparator.value}${fractional}` : grouped;
 }
 function displayedRawAmount() {
-  return (rawAmount.value || "0").replace(".", decimalSeparator.value);
+  return rawAmount.value.replace(".", decimalSeparator.value);
 }
 function value(code: Code) {
   if (!rates.value) return "—";
@@ -49,12 +49,13 @@ function select(code: Code) {
   selected.value = code;
   rawAmount.value = String(Number(next.toFixed(2)));
 }
-function focusAmount(code: Code, event: FocusEvent) {
-  select(code);
+function activateInput(code: Code, event: Event) {
+  if (selected.value !== code) selected.value = code;
+  rawAmount.value = "";
   const input = event.target as HTMLInputElement;
   requestAnimationFrame(() => {
-    const position = input.value.length;
-    input.setSelectionRange(position, position);
+    input.focus();
+    input.setSelectionRange(0, 0);
   });
 }
 function clearAmount() {
@@ -117,7 +118,7 @@ onMounted(load);
       <section class="rows" :aria-label="t('values')">
         <article v-for="code in visible" :key="code" class="currency-row" :class="{ selected: code === selected }">
           <span class="code">{{ code }}</span>
-          <input class="amount" type="text" inputmode="decimal" enterkeyhint="enter" :aria-label="t('amount')" :value="code === selected ? displayedRawAmount() : value(code)" @focus="focusAmount(code, $event)" @input="updateAmount(code, $event)" @keydown.enter.prevent.stop="applyAmount(code, $event)" />
+          <input class="amount" type="text" inputmode="decimal" enterkeyhint="enter" :aria-label="t('amount')" :value="code === selected ? displayedRawAmount() : value(code)" @focus="activateInput(code, $event)" @click="activateInput(code, $event)" @input="updateAmount(code, $event)" @keydown.enter.prevent.stop="applyAmount(code, $event)" />
           <span class="name">{{ names[language][code] }}</span>
         </article>
       </section>
