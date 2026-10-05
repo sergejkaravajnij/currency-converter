@@ -58,7 +58,8 @@ function focusAmount(code: Code, event: FocusEvent) {
   });
 }
 function clearAmount() {
-  rawAmount.value = "0";
+  selected.value = "USD";
+  rawAmount.value = "1";
 }
 function updateAmount(code: Code, event: Event) {
   const input = event.target as HTMLInputElement;
