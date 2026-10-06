@@ -10,4 +10,4 @@ id = "2d5b2e68c4034f3ea653cda1cdb0af11"
 crons = ["15 13 * * *"]
 
 [vars]
-ALLOWED_ORIGINS = "http://localhost:5173,https://currency-calculator-cmm.pages.dev"
+ALLOWED_ORIGINS = "http://localhost:5173,https://currency-calculator-cmm.pages.dev,https://converter.karavadze.com"
