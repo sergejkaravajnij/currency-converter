@@ -44,10 +44,13 @@ function value(code: Code) {
   return format(amount.value * rates.value.rates[selected.value] / rates.value.rates[code], code);
 }
 function rateStatus(snapshot: Snapshot) {
-  const date = new Date(snapshot.effectiveDate).toLocaleDateString(locale.value);
+  const [year, month, day] = snapshot.effectiveDate.slice(0, 10).split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+  const calendarDate = date.toLocaleDateString(locale.value, { year: "numeric", month: "long", day: "numeric" });
+  const weekday = date.toLocaleDateString(locale.value, { weekday: "long" });
   return language.value === "ru"
-    ? `Официальный курс на ${date}. Следующий курс НБГ публикуется после 17:00 по Грузии и действует на следующий день.`
-    : `Official rate for ${date}. NBG publishes the next rate after 17:00 Georgia time; it applies the following day.`;
+    ? `Официальный курс от ${calendarDate} (${weekday})`
+    : `Official rate from ${weekday}, ${calendarDate}`;
 }
 function select(code: Code) {
   if (selected.value === code) return;
