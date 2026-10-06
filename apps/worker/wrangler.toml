@@ -11,3 +11,7 @@ crons = ["15 13 * * *"]
 
 [vars]
 ALLOWED_ORIGINS = "http://localhost:5173,https://currency-calculator-cmm.pages.dev,https://converter.karavadze.com"
+
+[observability]
+enabled = true
+head_sampling_rate = 1

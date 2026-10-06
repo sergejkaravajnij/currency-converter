@@ -36,6 +36,16 @@ export async function refreshRates(env: Env, now = new Date()): Promise<RateSnap
   return snapshot;
 }
 
+async function refreshRatesWithLogging(env: Env): Promise<void> {
+  try {
+    const snapshot = await refreshRates(env);
+    console.log(JSON.stringify({ event: "rates_refreshed", effectiveDate: snapshot.effectiveDate, fetchedAt: snapshot.fetchedAt }));
+  } catch (error) {
+    console.error(JSON.stringify({ event: "rates_refresh_failed", message: error instanceof Error ? error.message : "Unknown error" }));
+    throw error;
+  }
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const headers = cors(request, env);
@@ -48,6 +58,6 @@ export default {
     return Response.json(snapshot, { headers: { ...headers, "Cache-Control": "public, max-age=300" } });
   },
   async scheduled(_event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
-    ctx.waitUntil(refreshRates(env));
+    ctx.waitUntil(refreshRatesWithLogging(env));
   },
 } satisfies ExportedHandler<Env>;
