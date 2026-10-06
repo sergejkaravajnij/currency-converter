@@ -119,7 +119,7 @@ onMounted(load);
 
 <template>
   <main class="calculator">
-    <header><span class="eyebrow">{{ t("title") }}</span><span class="header-actions"><button class="clear-top" :aria-label="t('clear')" @click="clearAmount">AC</button><button class="settings" :aria-label="t('settings')" :title="t('settings')" @click="settingsOpen = true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.25"/><circle cx="12" cy="12" r="6.8"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.28 5.28l1.7 1.7M17.02 17.02l1.7 1.7M18.72 5.28l-1.7 1.7M6.98 17.02l-1.7 1.7"/></svg></button></span></header>
+    <header><span class="eyebrow">{{ t("title") }}</span><span class="header-actions"><button class="clear-top" :aria-label="t('clear')" @click="clearAmount">AC</button><button class="settings" :aria-label="t('settings')" :title="t('settings')" @click="settingsOpen = true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="7" cy="18" r="1.8"/></svg></button></span></header>
     <section v-if="loading" class="state">{{ t("loading") }}</section>
     <section v-else-if="error" class="state error"><p>{{ error }}</p><button @click="load">{{ t("retry") }}</button></section>
     <template v-else-if="rates">
