@@ -17,7 +17,8 @@ header { display: flex; justify-content: space-between; align-items: center; }
 .amount { width: min(62vw, 340px); align-self: start; padding: 0; border: 0; outline: 0; color: #ddd; background: transparent; font-size: clamp(28px, 8vw, 39px); font-variant-numeric: tabular-nums; text-align: right; }
 .amount:focus, .selected .amount { color: #e1744e; }
 .name { grid-column: 2; align-self: end; color: #9c9799; font-size: 15px; text-align: right; }
-.source { border-bottom: 1px solid #1c1c1c; padding: 17px 0; margin: 0; color: #777; font-size: 13px; text-align: center; }
+.source { padding: 17px 0 4px; margin: 0; color: #777; font-size: 13px; text-align: center; }
+.rate-status { border-bottom: 1px solid #1c1c1c; padding: 0 0 17px; margin: 0; color: #777; font-size: 12px; line-height: 1.4; text-align: center; }
 .warning { color: #e9ae58; text-align: center; margin: 8px 0 -20px; font-size: 13px; }
 .state { padding: 90px 0; text-align: center; color: #aaa; }
 .state button { color: #e1744e; background: #191919; border: 0; border-radius: 8px; padding: 10px 15px; cursor: pointer; }

@@ -43,6 +43,12 @@ function value(code: Code) {
   if (!rates.value) return "—";
   return format(amount.value * rates.value.rates[selected.value] / rates.value.rates[code], code);
 }
+function rateStatus(snapshot: Snapshot) {
+  const date = new Date(snapshot.effectiveDate).toLocaleDateString(locale.value);
+  return language.value === "ru"
+    ? `Официальный курс на ${date}. Следующий курс НБГ публикуется после 17:00 по Грузии и действует на следующий день.`
+    : `Official rate for ${date}. NBG publishes the next rate after 17:00 Georgia time; it applies the following day.`;
+}
 function select(code: Code) {
   if (selected.value === code) return;
   const next = rates.value ? amount.value * rates.value.rates[selected.value] / rates.value.rates[code] : amount.value;
@@ -122,7 +128,8 @@ onMounted(load);
           <span class="name">{{ names[language][code] }}</span>
         </article>
       </section>
-      <p class="source">{{ t("rates") }}: {{ rates.source }} · {{ new Date(rates.effectiveDate).toLocaleDateString(locale) }}</p>
+      <p class="source">{{ t("rates") }}: {{ rates.source }}</p>
+      <p class="rate-status">{{ rateStatus(rates) }}</p>
     </template>
   </main>
   <div v-if="settingsOpen" class="modal-backdrop" @click.self="settingsOpen = false">
