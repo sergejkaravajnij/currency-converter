@@ -6,9 +6,9 @@ button { font: inherit; }
 header { display: flex; justify-content: space-between; align-items: center; }
 .eyebrow { font-size: 25px; font-weight: 650; margin-left: 6px; }
 .header-actions { display: flex; align-items: center; gap: 14px; }
-.settings { display: grid; place-items: center; width: 38px; height: 38px; padding: 7px; border: 0; border-radius: 12px; color: #e8e6e7; background: transparent; cursor: pointer; }
-.settings:hover { background: #191919; }
-.settings svg { width: 24px; height: 24px; fill: currentColor; }
+.settings { display: grid; place-items: center; width: 42px; height: 42px; padding: 7px; border: 1px solid #2e2e2e; border-radius: 13px; color: #e8e6e7; background: #181818; cursor: pointer; }
+.settings:hover { background: #252525; }
+.settings svg { width: 25px; height: 25px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .clear-top { min-width: 84px; border: 0; border-radius: 14px; padding: 10px 24px; color: #e1744e; background: #191919; font-size: 17px; cursor: pointer; }
 .rows { margin-top: 34px; }
 .currency-row { position: relative; display: grid; grid-template-columns: 1fr auto; width: 100%; min-height: 90px; padding: 12px 0; color: #ddd; border-radius: 14px; }

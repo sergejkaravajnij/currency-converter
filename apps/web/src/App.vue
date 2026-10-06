@@ -119,7 +119,7 @@ onMounted(load);
 
 <template>
   <main class="calculator">
-    <header><span class="eyebrow">{{ t("title") }}</span><span class="header-actions"><button class="clear-top" :aria-label="t('clear')" @click="clearAmount">AC</button><button class="settings" :aria-label="t('settings')" @click="settingsOpen = true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.25a3.75 3.75 0 1 0 0 7.5 3.75 3.75 0 0 0 0-7.5Zm8.03 4.61 1.58-1.23-1.87-3.24-1.9.77a8.1 8.1 0 0 0-1.53-.89l-.29-2.03h-3.74l-.29 2.03c-.54.22-1.05.52-1.53.89l-1.9-.77-1.87 3.24 1.58 1.23a7.8 7.8 0 0 0 0 1.78l-1.58 1.23 1.87 3.24 1.9-.77c.48.37.99.67 1.53.89l.29 2.03h3.74l.29-2.03c.54-.22 1.05-.52 1.53-.89l1.9.77 1.87-3.24-1.58-1.23c.13-.58.13-1.2 0-1.78Z" /></svg></button></span></header>
+    <header><span class="eyebrow">{{ t("title") }}</span><span class="header-actions"><button class="clear-top" :aria-label="t('clear')" @click="clearAmount">AC</button><button class="settings" :aria-label="t('settings')" :title="t('settings')" @click="settingsOpen = true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.25"/><circle cx="12" cy="12" r="6.8"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.28 5.28l1.7 1.7M17.02 17.02l1.7 1.7M18.72 5.28l-1.7 1.7M6.98 17.02l-1.7 1.7"/></svg></button></span></header>
     <section v-if="loading" class="state">{{ t("loading") }}</section>
     <section v-else-if="error" class="state error"><p>{{ error }}</p><button @click="load">{{ t("retry") }}</button></section>
     <template v-else-if="rates">
