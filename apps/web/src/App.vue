@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
-const allCodes = ["USD", "GEL", "RUB", "EUR", "GBP", "PLN", "TRY", "IDR"] as const;
+const allCodes = ["USD", "GEL", "RUB", "EUR", "GBP", "PLN", "TRY", "JPY", "CNY", "HKD", "IDR"] as const;
 type Code = (typeof allCodes)[number];
 type Language = "en" | "ru";
 type InstallPromptEvent = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: "accepted" | "dismissed" }> };
 type Snapshot = { rates: Record<Code, number>; effectiveDate: string; fetchedAt: string; source: string; stale: boolean };
 const names: Record<Language, Record<Code, string>> = {
-  en: { USD: "US Dollar", GEL: "Georgian Lari", RUB: "Russian Ruble", EUR: "Euro", GBP: "British Pound", PLN: "Polish Zloty", TRY: "Turkish Lira", IDR: "Indonesian Rupiah" },
-  ru: { USD: "Доллар США", GEL: "Грузинский лари", RUB: "Российский рубль", EUR: "Евро", GBP: "Фунт стерлингов", PLN: "Польский злотый", TRY: "Турецкая лира", IDR: "Индонезийская рупия" },
+  en: { USD: "US Dollar", GEL: "Georgian Lari", RUB: "Russian Ruble", EUR: "Euro", GBP: "British Pound", PLN: "Polish Zloty", TRY: "Turkish Lira", JPY: "Japanese Yen", CNY: "Chinese Yuan", HKD: "Hong Kong Dollar", IDR: "Indonesian Rupiah" },
+  ru: { USD: "Доллар США", GEL: "Грузинский лари", RUB: "Российский рубль", EUR: "Евро", GBP: "Фунт стерлингов", PLN: "Польский злотый", TRY: "Турецкая лира", JPY: "Японская иена", CNY: "Китайский юань", HKD: "Гонконгский доллар", IDR: "Индонезийская рупия" },
 };
 const copy = {
   en: { title: "Currency Converter", clear: "Clear amount", settings: "Open currency settings", settingsTitle: "Settings", numberFormat: "Number format", saved: "Settings are saved automatically in your browser.", loading: "Loading official rates…", unavailable: "Rates are not available yet.", failed: "Could not load exchange rates.", retry: "Try again", stale: "Showing the last available rates.", values: "Currency values", amount: "Currency amount", rates: "Rates", currencies: "Currencies", choose: "Choose the rows to show and their order.", decimal: "Decimal separator", thousands: "Thousands separator", language: "Language", comma: "Comma (,)", dot: "Dot (.)", space: "Space", none: "None", english: "English", russian: "Русский", moveUp: "Move up", moveDown: "Move down", installTitle: "Install app", install: "Install", iosInstall: "Open this page in Safari, tap Share, then choose Add to Home Screen." },
