@@ -43,11 +43,13 @@ header { display: flex; justify-content: space-between; align-items: center; }
 .state { padding: 90px 0; text-align: center; color: #aaa; }
 .state button { color: #e1744e; background: #191919; border: 0; border-radius: 8px; padding: 10px 15px; cursor: pointer; }
 .error { color: #dd8b78; }
-.modal-backdrop { position: fixed; inset: 0; z-index: 10; padding: 18px; display: grid; place-items: center; background: #000b; backdrop-filter: blur(4px); }
-.modal { width: min(100%, 460px); max-height: calc(100dvh - 36px); overflow: auto; padding: 0 20px 20px; border: 1px solid #303030; border-radius: 20px; background: #181818; color: #eee; box-shadow: 0 24px 80px #0009; }
-.modal-header { position: sticky; top: 0; z-index: 1; padding: 20px 0 16px; background: #181818; border-bottom: 1px solid #303030; }
-.modal h2 { margin: 0; font-size: 21px; }
-.close { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; color: #ddd; background: #292929; font-size: 24px; cursor: pointer; }
+.settings-page { position: fixed; inset: 0; z-index: 10; overflow: auto; background: #000; color: #eee; }
+.settings-content { width: min(100%, 560px); min-height: 100%; padding: 34px 28px 28px; margin: auto; }
+.settings-header { justify-content: flex-start; gap: 14px; padding-bottom: 17px; border-bottom: 1px solid #303030; }
+.settings-header h2 { margin: 0; font-size: 21px; }
+.back { display: grid; place-items: center; width: 42px; height: 42px; padding: 7px; border: 1px solid #2e2e2e; border-radius: 13px; color: #e8e6e7; background: #181818; cursor: pointer; }
+.back:hover { background: #252525; }
+.back svg { width: 25px; height: 25px; stroke-width: 1.8; }
 .settings-section { padding-top: 20px; }
 .settings-section h3 { margin: 0 0 5px; font-size: 14px; color: #eee; }
 .settings-section p { margin: 0 0 12px; color: #969296; font-size: 13px; }
@@ -61,4 +63,6 @@ header { display: flex; justify-content: space-between; align-items: center; }
 .setting-row small { color: #969296; font-size: 12px; }
 .setting-row button { width: 30px; height: 30px; border: 0; background: #292929; color: #eee; margin-left: 6px; border-radius: 8px; cursor: pointer; }
 .settings-note { margin: 20px 0 0; color: #777; font-size: 12px; line-height: 1.4; text-align: center; }
-@media (max-width: 430px) { .calculator { padding: 26px 20px 20px; } .currency-row { min-height: 82px; } }
+.settings-slide-enter-active, .settings-slide-leave-active { transition: transform .24s ease; }
+.settings-slide-enter-from, .settings-slide-leave-to { transform: translateX(100%); }
+@media (max-width: 430px) { .calculator, .settings-content { padding: 26px 20px 20px; } .currency-row { min-height: 82px; } }

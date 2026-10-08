@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
-import { Delete, Globe, ListChecks, Maximize2, Minimize2 } from "@lucide/vue";
+import { ArrowLeft, Delete, Globe, ListChecks, Maximize2, Minimize2 } from "@lucide/vue";
 
 const allCodes = ["USD", "GEL", "RUB", "EUR", "GBP", "PLN", "TRY", "JPY", "CNY", "HKD", "IDR"] as const;
 type Code = (typeof allCodes)[number];
@@ -11,8 +11,8 @@ const names: Record<Language, Record<Code, string>> = {
   ru: { USD: "Доллар США", GEL: "Грузинский лари", RUB: "Российский рубль", EUR: "Евро", GBP: "Фунт стерлингов", PLN: "Польский злотый", TRY: "Турецкая лира", JPY: "Японская иена", CNY: "Китайский юань", HKD: "Гонконгский доллар", IDR: "Индонезийская рупия" },
 };
 const copy = {
-  en: { title: "Currency Converter", clear: "Clear amount", settings: "Open language and number format settings", settingsTitle: "Settings", numberFormat: "Number format", saved: "Settings are saved automatically in your browser.", loading: "Loading official rates…", unavailable: "Rates are not available yet.", failed: "Could not load exchange rates.", retry: "Try again", stale: "Showing the last available rates.", values: "Currency values", amount: "Currency amount", rates: "Rates", editCurrencies: "Edit", done: "Done", compactMode: "Compact mode", standardMode: "Standard mode", hide: "Hide currency", decimal: "Decimal separator", thousands: "Thousands separator", language: "Language", comma: "Comma (,)", dot: "Dot (.)", space: "Space", none: "None", english: "English", russian: "Русский", moveUp: "Move up", moveDown: "Move down" },
-  ru: { title: "Конвертер валют", clear: "Очистить сумму", settings: "Открыть настройки языка и формата чисел", settingsTitle: "Настройки", numberFormat: "Формат чисел", saved: "Настройки автоматически сохраняются в браузере.", loading: "Загрузка официальных курсов…", unavailable: "Курсы пока недоступны.", failed: "Не удалось загрузить курсы.", retry: "Повторить", stale: "Показаны последние доступные курсы.", values: "Значения валют", amount: "Сумма в валюте", rates: "Курсы", editCurrencies: "Изменить", done: "Готово", compactMode: "Компактный режим", standardMode: "Обычный режим", hide: "Скрыть валюту", decimal: "Десятичный разделитель", thousands: "Разделитель тысяч", language: "Язык", comma: "Запятая (,)", dot: "Точка (.)", space: "Пробел", none: "Нет", english: "English", russian: "Русский", moveUp: "Выше", moveDown: "Ниже" },
+  en: { title: "Currency Converter", clear: "Clear amount", settings: "Open language and number format settings", settingsTitle: "Settings", back: "Back", numberFormat: "Number format", saved: "Settings are saved automatically in your browser.", loading: "Loading official rates…", unavailable: "Rates are not available yet.", failed: "Could not load exchange rates.", retry: "Try again", stale: "Showing the last available rates.", values: "Currency values", amount: "Currency amount", rates: "Rates", editCurrencies: "Edit", done: "Done", compactMode: "Compact mode", standardMode: "Standard mode", hide: "Hide currency", decimal: "Decimal separator", thousands: "Thousands separator", language: "Language", comma: "Comma (,)", dot: "Dot (.)", space: "Space", none: "None", english: "English", russian: "Русский", moveUp: "Move up", moveDown: "Move down" },
+  ru: { title: "Конвертер валют", clear: "Очистить сумму", settings: "Открыть настройки языка и формата чисел", settingsTitle: "Настройки", back: "Назад", numberFormat: "Формат чисел", saved: "Настройки автоматически сохраняются в браузере.", loading: "Загрузка официальных курсов…", unavailable: "Курсы пока недоступны.", failed: "Не удалось загрузить курсы.", retry: "Повторить", stale: "Показаны последние доступные курсы.", values: "Значения валют", amount: "Сумма в валюте", rates: "Курсы", editCurrencies: "Изменить", done: "Готово", compactMode: "Компактный режим", standardMode: "Обычный режим", hide: "Скрыть валюту", decimal: "Десятичный разделитель", thousands: "Разделитель тысяч", language: "Язык", comma: "Запятая (,)", dot: "Точка (.)", space: "Пробел", none: "Нет", english: "English", russian: "Русский", moveUp: "Выше", moveDown: "Ниже" },
 } as const;
 const stored = JSON.parse(localStorage.getItem("currency-preferences") ?? "{}") as { order?: Code[]; hidden?: Code[]; decimalSeparator?: "." | ","; groupSeparator?: " " | "." | "," | ""; language?: Language; compactMode?: boolean };
 const savedOrder = stored.order?.filter((code) => allCodes.includes(code)) ?? [];
@@ -154,9 +154,10 @@ onMounted(() => {
       <p class="rate-status" :class="{ 'compact-rate-status': compactMode }">{{ compactMode ? compactRateStatus(rates) : rateStatus(rates) }}</p>
     </template>
   </main>
-  <div v-if="settingsOpen" class="modal-backdrop" @click.self="settingsOpen = false">
-    <section class="modal" role="dialog" aria-modal="true" :aria-label="t('settingsTitle')">
-      <header class="modal-header"><h2>{{ t("settingsTitle") }}</h2><button class="close" aria-label="Close" @click="settingsOpen = false">×</button></header>
+  <Transition name="settings-slide">
+    <main v-if="settingsOpen" class="settings-page" :aria-label="t('settingsTitle')">
+      <section class="settings-content">
+      <header class="settings-header"><button class="back" :aria-label="t('back')" @click="settingsOpen = false"><ArrowLeft/></button><h2>{{ t("settingsTitle") }}</h2></header>
       <section class="settings-section">
         <h3>{{ t("language") }}</h3>
         <div class="language-settings"><select v-model="language" :aria-label="t('language')"><option value="en">{{ t("english") }}</option><option value="ru">{{ t("russian") }}</option></select></div>
@@ -169,6 +170,7 @@ onMounted(() => {
         </div>
       </section>
       <p class="settings-note">{{ t("saved") }}</p>
-    </section>
-  </div>
+      </section>
+    </main>
+  </Transition>
 </template>
