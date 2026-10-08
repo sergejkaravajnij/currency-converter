@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
 const allCodes = ["USD", "GEL", "RUB", "EUR", "GBP", "PLN", "TRY", "JPY", "CNY", "HKD", "IDR"] as const;
 type Code = (typeof allCodes)[number];
 type Language = "en" | "ru";
-type InstallPromptEvent = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: "accepted" | "dismissed" }> };
 type Snapshot = { rates: Record<Code, number>; effectiveDate: string; fetchedAt: string; source: string; stale: boolean };
 const names: Record<Language, Record<Code, string>> = {
   en: { USD: "US Dollar", GEL: "Georgian Lari", RUB: "Russian Ruble", EUR: "Euro", GBP: "British Pound", PLN: "Polish Zloty", TRY: "Turkish Lira", JPY: "Japanese Yen", CNY: "Chinese Yuan", HKD: "Hong Kong Dollar", IDR: "Indonesian Rupiah" },
   ru: { USD: "Доллар США", GEL: "Грузинский лари", RUB: "Российский рубль", EUR: "Евро", GBP: "Фунт стерлингов", PLN: "Польский злотый", TRY: "Турецкая лира", JPY: "Японская иена", CNY: "Китайский юань", HKD: "Гонконгский доллар", IDR: "Индонезийская рупия" },
 };
 const copy = {
-  en: { title: "Currency Converter", clear: "Clear amount", settings: "Open currency settings", settingsTitle: "Settings", numberFormat: "Number format", saved: "Settings are saved automatically in your browser.", loading: "Loading official rates…", unavailable: "Rates are not available yet.", failed: "Could not load exchange rates.", retry: "Try again", stale: "Showing the last available rates.", values: "Currency values", amount: "Currency amount", rates: "Rates", editCurrencies: "Edit", done: "Done", hide: "Hide currency", decimal: "Decimal separator", thousands: "Thousands separator", language: "Language", comma: "Comma (,)", dot: "Dot (.)", space: "Space", none: "None", english: "English", russian: "Русский", moveUp: "Move up", moveDown: "Move down", installTitle: "Install app", install: "Install", iosInstall: "Open this page in Safari, tap Share, then choose Add to Home Screen." },
-  ru: { title: "Конвертер валют", clear: "Очистить сумму", settings: "Открыть настройки валют", settingsTitle: "Настройки", numberFormat: "Формат чисел", saved: "Настройки автоматически сохраняются в браузере.", loading: "Загрузка официальных курсов…", unavailable: "Курсы пока недоступны.", failed: "Не удалось загрузить курсы.", retry: "Повторить", stale: "Показаны последние доступные курсы.", values: "Значения валют", amount: "Сумма в валюте", rates: "Курсы", editCurrencies: "Изменить", done: "Готово", hide: "Скрыть валюту", decimal: "Десятичный разделитель", thousands: "Разделитель тысяч", language: "Язык", comma: "Запятая (,)", dot: "Точка (.)", space: "Пробел", none: "Нет", english: "English", russian: "Русский", moveUp: "Выше", moveDown: "Ниже", installTitle: "Установить приложение", install: "Установить", iosInstall: "Откройте страницу в Safari, нажмите «Поделиться», затем выберите «На экран “Домой”»." },
+  en: { title: "Currency Converter", clear: "Clear amount", settings: "Open language and number format settings", settingsTitle: "Settings", numberFormat: "Number format", saved: "Settings are saved automatically in your browser.", loading: "Loading official rates…", unavailable: "Rates are not available yet.", failed: "Could not load exchange rates.", retry: "Try again", stale: "Showing the last available rates.", values: "Currency values", amount: "Currency amount", rates: "Rates", editCurrencies: "Edit", done: "Done", hide: "Hide currency", decimal: "Decimal separator", thousands: "Thousands separator", language: "Language", comma: "Comma (,)", dot: "Dot (.)", space: "Space", none: "None", english: "English", russian: "Русский", moveUp: "Move up", moveDown: "Move down" },
+  ru: { title: "Конвертер валют", clear: "Очистить сумму", settings: "Открыть настройки языка и формата чисел", settingsTitle: "Настройки", numberFormat: "Формат чисел", saved: "Настройки автоматически сохраняются в браузере.", loading: "Загрузка официальных курсов…", unavailable: "Курсы пока недоступны.", failed: "Не удалось загрузить курсы.", retry: "Повторить", stale: "Показаны последние доступные курсы.", values: "Значения валют", amount: "Сумма в валюте", rates: "Курсы", editCurrencies: "Изменить", done: "Готово", hide: "Скрыть валюту", decimal: "Десятичный разделитель", thousands: "Разделитель тысяч", language: "Язык", comma: "Запятая (,)", dot: "Точка (.)", space: "Пробел", none: "Нет", english: "English", russian: "Русский", moveUp: "Выше", moveDown: "Ниже" },
 } as const;
 const stored = JSON.parse(localStorage.getItem("currency-preferences") ?? "{}") as { order?: Code[]; hidden?: Code[]; decimalSeparator?: "." | ","; groupSeparator?: " " | "." | "," | ""; language?: Language };
 const savedOrder = stored.order?.filter((code) => allCodes.includes(code)) ?? [];
@@ -27,15 +26,11 @@ const rates = ref<Snapshot | null>(null);
 const error = ref("");
 const loading = ref(true);
 const settingsOpen = ref(false);
-const deferredInstallPrompt = ref<InstallPromptEvent | null>(null);
 const currencyEditMode = ref(false);
-const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
-const isStandalone = ref(window.matchMedia("(display-mode: standalone)").matches || (navigator as Navigator & { standalone?: boolean }).standalone === true);
 
 const amount = computed(() => Number(rawAmount.value.replace(",", ".")) || 0);
 const visible = computed(() => order.value.filter((code) => currencyEditMode.value || !hidden.value.includes(code)));
 const locale = computed(() => language.value === "ru" ? "ru-RU" : "en-US");
-const canShowInstall = computed(() => !isStandalone.value && (isIos || deferredInstallPrompt.value !== null));
 function t(key: keyof typeof copy.en) { return copy[language.value][key]; }
 function format(value: number, _code: Code) {
   const plain = new Intl.NumberFormat("en-US", { useGrouping: false, maximumFractionDigits: 2, minimumFractionDigits: 0 }).format(value);
@@ -124,36 +119,16 @@ async function load() {
   } catch (cause) { error.value = cause instanceof Error ? cause.message : t("failed"); }
   finally { loading.value = false; }
 }
-function captureInstallPrompt(event: Event) {
-  event.preventDefault();
-  deferredInstallPrompt.value = event as InstallPromptEvent;
-}
-function markInstalled() {
-  isStandalone.value = true;
-  deferredInstallPrompt.value = null;
-}
-async function install() {
-  const prompt = deferredInstallPrompt.value;
-  if (!prompt) return;
-  await prompt.prompt();
-  deferredInstallPrompt.value = null;
-}
 watch([order, hidden, decimalSeparator, groupSeparator, language], () => localStorage.setItem("currency-preferences", JSON.stringify({ order: order.value, hidden: hidden.value, decimalSeparator: decimalSeparator.value, groupSeparator: groupSeparator.value, language: language.value })), { deep: true });
 watch(language, () => { document.title = t("title"); }, { immediate: true });
 onMounted(() => {
   load();
-  window.addEventListener("beforeinstallprompt", captureInstallPrompt);
-  window.addEventListener("appinstalled", markInstalled);
-});
-onBeforeUnmount(() => {
-  window.removeEventListener("beforeinstallprompt", captureInstallPrompt);
-  window.removeEventListener("appinstalled", markInstalled);
 });
 </script>
 
 <template>
   <main class="calculator">
-    <header><span class="eyebrow">{{ t("title") }}</span><span class="header-actions"><button class="currency-edit-toggle" :class="{ active: currencyEditMode }" :aria-label="currencyEditMode ? t('done') : t('editCurrencies')" :title="currencyEditMode ? t('done') : t('editCurrencies')" @click="toggleCurrencyEdit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 7 2 2 3-4M11 7h9M4 14l2 2 3-4M11 14h9M4 20l2 2 3-4M11 20h9"/></svg></button><button class="settings" :aria-label="t('settings')" :title="t('settings')" @click="settingsOpen = true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="7" cy="18" r="1.8"/></svg></button></span></header>
+    <header><span class="eyebrow">{{ t("title") }}</span><span class="header-actions"><button class="currency-edit-toggle" :class="{ active: currencyEditMode }" :aria-label="currencyEditMode ? t('done') : t('editCurrencies')" :title="currencyEditMode ? t('done') : t('editCurrencies')" @click="toggleCurrencyEdit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 7 2 2 3-4M11 7h9M4 14l2 2 3-4M11 14h9M4 20l2 2 3-4M11 20h9"/></svg></button><button class="settings" :aria-label="t('settings')" :title="t('settings')" @click="settingsOpen = true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle class="globe-outline" cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.4 2.5 3.6 5.5 3.6 9S14.4 18.5 12 21M12 3C9.6 5.5 8.4 8.5 8.4 12s1.2 6.5 3.6 9"/></svg></button></span></header>
     <section v-if="loading" class="state">{{ t("loading") }}</section>
     <section v-else-if="error" class="state error"><p>{{ error }}</p><button @click="load">{{ t("retry") }}</button></section>
     <template v-else-if="rates">
@@ -183,11 +158,6 @@ onBeforeUnmount(() => {
           <label>{{ t("decimal") }}<select v-model="decimalSeparator"><option value=",">{{ t("comma") }}</option><option value=".">{{ t("dot") }}</option></select></label>
           <label>{{ t("thousands") }}<select v-model="groupSeparator"><option value=" ">{{ t("space") }}</option><option value=",">{{ t("comma") }}</option><option value=".">{{ t("dot") }}</option><option value="">{{ t("none") }}</option></select></label>
         </div>
-      </section>
-      <section v-if="canShowInstall" class="settings-section install-section">
-        <h3>{{ t("installTitle") }}</h3>
-        <p v-if="isIos">{{ t("iosInstall") }}</p>
-        <button v-else class="install-button" @click="install">{{ t("install") }}</button>
       </section>
       <p class="settings-note">{{ t("saved") }}</p>
     </section>
