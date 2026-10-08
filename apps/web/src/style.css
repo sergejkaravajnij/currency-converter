@@ -10,12 +10,14 @@ header { display: flex; justify-content: space-between; align-items: center; }
 .settings:hover { background: #252525; }
 .settings svg { width: 25px; height: 25px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .settings svg circle { fill: #181818; }
-.clear-top { min-width: 84px; border: 0; border-radius: 14px; padding: 10px 24px; color: #e1744e; background: #191919; font-size: 17px; cursor: pointer; }
 .rows { margin-top: 34px; }
 .rows-toolbar { display: flex; justify-content: flex-end; margin: -12px 0 4px; }
-.currency-edit-toggle { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 8px; color: #aaa; background: #191919; cursor: pointer; }
-.currency-edit-toggle svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-.currency-edit-toggle.active { color: #e1744e; background: #292929; }
+.clear-top { display: inline-flex; align-items: center; gap: 7px; min-width: 84px; border: 0; border-radius: 10px; padding: 7px 13px; color: #e1744e; background: #191919; font-size: 16px; cursor: pointer; }
+.clear-top svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.currency-edit-toggle { display: grid; place-items: center; width: 42px; height: 42px; padding: 7px; border: 1px solid #2e2e2e; border-radius: 13px; color: #e8e6e7; background: #181818; cursor: pointer; }
+.currency-edit-toggle:hover { background: #252525; }
+.currency-edit-toggle svg { width: 25px; height: 25px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.currency-edit-toggle.active { color: #e1744e; background: #252525; }
 .currency-row { position: relative; display: grid; grid-template-columns: 1fr auto; width: 100%; min-height: 90px; padding: 12px 0; color: #ddd; border-radius: 14px; }
 .currency-row:focus-within, .currency-row:hover { background: #111; }
 .currency-row.hidden { opacity: .42; }
