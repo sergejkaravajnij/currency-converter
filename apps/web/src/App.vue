@@ -159,7 +159,7 @@ onBeforeUnmount(() => {
     <template v-else-if="rates">
       <p v-if="rates.stale" class="warning">{{ t("stale") }}</p>
       <section class="rows" :aria-label="t('values')">
-        <div class="rows-toolbar"><button class="currency-edit-toggle" @click="toggleCurrencyEdit">{{ currencyEditMode ? t("done") : t("editCurrencies") }}</button></div>
+        <div class="rows-toolbar"><button class="currency-edit-toggle" :class="{ active: currencyEditMode }" :aria-label="currencyEditMode ? t('done') : t('editCurrencies')" :title="currencyEditMode ? t('done') : t('editCurrencies')" @click="toggleCurrencyEdit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 7 2 2 3-4M11 7h9M4 14l2 2 3-4M11 14h9M4 20l2 2 3-4M11 20h9"/></svg></button></div>
         <article v-for="code in visible" :key="code" class="currency-row" :class="{ selected: code === selected, hidden: hidden.includes(code) }">
           <div class="code-area"><span class="code">{{ code }}</span><span v-if="currencyEditMode" class="row-actions"><button :aria-label="t('moveUp')" @click="move(code, -1)">↑</button><button :aria-label="t('moveDown')" @click="move(code, 1)">↓</button><label class="currency-visibility" :title="t('hide')"><input type="checkbox" :checked="!hidden.includes(code)" :aria-label="t('hide')" @change="toggle(code)"/></label></span></div>
           <input class="amount" type="text" inputmode="decimal" enterkeyhint="enter" :aria-label="t('amount')" :value="code === selected ? displayedRawAmount() : value(code)" @focus="activateInput(code, $event)" @click="activateInput(code, $event)" @input="updateAmount(code, $event)" @keydown.enter.prevent.stop="applyAmount(code, $event)" />

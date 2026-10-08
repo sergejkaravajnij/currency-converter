@@ -13,7 +13,9 @@ header { display: flex; justify-content: space-between; align-items: center; }
 .clear-top { min-width: 84px; border: 0; border-radius: 14px; padding: 10px 24px; color: #e1744e; background: #191919; font-size: 17px; cursor: pointer; }
 .rows { margin-top: 34px; }
 .rows-toolbar { display: flex; justify-content: flex-end; margin: -12px 0 4px; }
-.currency-edit-toggle { border: 0; border-radius: 8px; padding: 6px 10px; color: #aaa; background: #191919; font: inherit; font-size: 13px; cursor: pointer; }
+.currency-edit-toggle { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 8px; color: #aaa; background: #191919; cursor: pointer; }
+.currency-edit-toggle svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.currency-edit-toggle.active { color: #e1744e; background: #292929; }
 .currency-row { position: relative; display: grid; grid-template-columns: 1fr auto; width: 100%; min-height: 90px; padding: 12px 0; color: #ddd; border-radius: 14px; }
 .currency-row:focus-within, .currency-row:hover { background: #111; }
 .currency-row.hidden { opacity: .42; }
