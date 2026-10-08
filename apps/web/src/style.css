@@ -9,7 +9,6 @@ header { display: flex; justify-content: space-between; align-items: center; }
 .settings { display: grid; place-items: center; width: 42px; height: 42px; padding: 7px; border: 1px solid #2e2e2e; border-radius: 13px; color: #e8e6e7; background: #181818; cursor: pointer; }
 .settings:hover { background: #252525; }
 .settings svg { width: 25px; height: 25px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.settings svg circle:not(.globe-outline) { fill: #181818; }
 .rows { margin-top: 34px; }
 .rows-toolbar { display: flex; justify-content: flex-end; margin: -12px 0 4px; }
 .clear-top { display: inline-flex; align-items: center; gap: 7px; min-width: 84px; border: 0; border-radius: 10px; padding: 7px 13px; color: #e1744e; background: #191919; font-size: 16px; cursor: pointer; }
@@ -18,6 +17,9 @@ header { display: flex; justify-content: space-between; align-items: center; }
 .currency-edit-toggle:hover { background: #252525; }
 .currency-edit-toggle svg { width: 25px; height: 25px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .currency-edit-toggle.active { color: #e1744e; background: #252525; }
+.compact-toggle { display: grid; place-items: center; width: 42px; height: 42px; padding: 7px; border: 1px solid #2e2e2e; border-radius: 13px; color: #e8e6e7; background: #181818; cursor: pointer; }
+.compact-toggle:hover, .compact-toggle.active { color: #e1744e; background: #252525; }
+.compact-toggle svg { width: 25px; height: 25px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .currency-row { position: relative; display: grid; grid-template-columns: 1fr auto; width: 100%; min-height: 90px; padding: 12px 0; color: #ddd; border-radius: 14px; }
 .currency-row:focus-within, .currency-row:hover { background: #111; }
 .currency-row.hidden { opacity: .42; }
@@ -33,6 +35,9 @@ header { display: flex; justify-content: space-between; align-items: center; }
 .name { grid-column: 2; align-self: end; color: #9c9799; font-size: 15px; text-align: right; }
 .source { padding: 17px 0 4px; margin: 0; color: #777; font-size: 13px; text-align: center; }
 .rate-status { border-bottom: 1px solid #1c1c1c; padding: 0 0 17px; margin: 0; color: #777; font-size: 12px; line-height: 1.4; text-align: center; }
+.compact .rows { margin-top: 20px; }
+.compact .currency-row { min-height: 58px; padding: 8px 0; }
+.compact-rate-status { border-bottom: 0; padding: 12px 0 0; font-size: 11px; text-align: right; }
 .warning { color: #e9ae58; text-align: center; margin: 8px 0 -20px; font-size: 13px; }
 .state { padding: 90px 0; text-align: center; color: #aaa; }
 .state button { color: #e1744e; background: #191919; border: 0; border-radius: 8px; padding: 10px 15px; cursor: pointer; }
