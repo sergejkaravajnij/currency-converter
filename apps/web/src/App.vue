@@ -11,8 +11,8 @@ const names: Record<Language, Record<Code, string>> = {
   ru: { USD: "Доллар США", GEL: "Грузинский лари", RUB: "Российский рубль", EUR: "Евро", GBP: "Фунт стерлингов", PLN: "Польский злотый", TRY: "Турецкая лира", JPY: "Японская иена", CNY: "Китайский юань", HKD: "Гонконгский доллар", IDR: "Индонезийская рупия" },
 };
 const copy = {
-  en: { title: "Currency Converter", clear: "Clear amount", settings: "Open currency settings", settingsTitle: "Settings", numberFormat: "Number format", saved: "Settings are saved automatically in your browser.", loading: "Loading official rates…", unavailable: "Rates are not available yet.", failed: "Could not load exchange rates.", retry: "Try again", stale: "Showing the last available rates.", values: "Currency values", amount: "Currency amount", rates: "Rates", currencies: "Currencies", choose: "Choose the rows to show and their order.", decimal: "Decimal separator", thousands: "Thousands separator", language: "Language", comma: "Comma (,)", dot: "Dot (.)", space: "Space", none: "None", english: "English", russian: "Русский", moveUp: "Move up", moveDown: "Move down", installTitle: "Install app", install: "Install", iosInstall: "Open this page in Safari, tap Share, then choose Add to Home Screen." },
-  ru: { title: "Конвертер валют", clear: "Очистить сумму", settings: "Открыть настройки валют", settingsTitle: "Настройки", numberFormat: "Формат чисел", saved: "Настройки автоматически сохраняются в браузере.", loading: "Загрузка официальных курсов…", unavailable: "Курсы пока недоступны.", failed: "Не удалось загрузить курсы.", retry: "Повторить", stale: "Показаны последние доступные курсы.", values: "Значения валют", amount: "Сумма в валюте", rates: "Курсы", currencies: "Валюты", choose: "Выберите отображаемые валюты и их порядок.", decimal: "Десятичный разделитель", thousands: "Разделитель тысяч", language: "Язык", comma: "Запятая (,)", dot: "Точка (.)", space: "Пробел", none: "Нет", english: "English", russian: "Русский", moveUp: "Выше", moveDown: "Ниже", installTitle: "Установить приложение", install: "Установить", iosInstall: "Откройте страницу в Safari, нажмите «Поделиться», затем выберите «На экран “Домой”»." },
+  en: { title: "Currency Converter", clear: "Clear amount", settings: "Open currency settings", settingsTitle: "Settings", numberFormat: "Number format", saved: "Settings are saved automatically in your browser.", loading: "Loading official rates…", unavailable: "Rates are not available yet.", failed: "Could not load exchange rates.", retry: "Try again", stale: "Showing the last available rates.", values: "Currency values", amount: "Currency amount", rates: "Rates", currencies: "Currencies", choose: "Choose the rows to show and their order.", editCurrencies: "Edit", done: "Done", hide: "Hide currency", decimal: "Decimal separator", thousands: "Thousands separator", language: "Language", comma: "Comma (,)", dot: "Dot (.)", space: "Space", none: "None", english: "English", russian: "Русский", moveUp: "Move up", moveDown: "Move down", installTitle: "Install app", install: "Install", iosInstall: "Open this page in Safari, tap Share, then choose Add to Home Screen." },
+  ru: { title: "Конвертер валют", clear: "Очистить сумму", settings: "Открыть настройки валют", settingsTitle: "Настройки", numberFormat: "Формат чисел", saved: "Настройки автоматически сохраняются в браузере.", loading: "Загрузка официальных курсов…", unavailable: "Курсы пока недоступны.", failed: "Не удалось загрузить курсы.", retry: "Повторить", stale: "Показаны последние доступные курсы.", values: "Значения валют", amount: "Сумма в валюте", rates: "Курсы", currencies: "Валюты", choose: "Выберите отображаемые валюты и их порядок.", editCurrencies: "Изменить", done: "Готово", hide: "Скрыть валюту", decimal: "Десятичный разделитель", thousands: "Разделитель тысяч", language: "Язык", comma: "Запятая (,)", dot: "Точка (.)", space: "Пробел", none: "Нет", english: "English", russian: "Русский", moveUp: "Выше", moveDown: "Ниже", installTitle: "Установить приложение", install: "Установить", iosInstall: "Откройте страницу в Safari, нажмите «Поделиться», затем выберите «На экран “Домой”»." },
 } as const;
 const stored = JSON.parse(localStorage.getItem("currency-preferences") ?? "{}") as { order?: Code[]; hidden?: Code[]; decimalSeparator?: "." | ","; groupSeparator?: " " | "." | "," | ""; language?: Language };
 const savedOrder = stored.order?.filter((code) => allCodes.includes(code)) ?? [];
@@ -28,11 +28,12 @@ const error = ref("");
 const loading = ref(true);
 const settingsOpen = ref(false);
 const deferredInstallPrompt = ref<InstallPromptEvent | null>(null);
+const currencyEditMode = ref(false);
 const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
 const isStandalone = ref(window.matchMedia("(display-mode: standalone)").matches || (navigator as Navigator & { standalone?: boolean }).standalone === true);
 
 const amount = computed(() => Number(rawAmount.value.replace(",", ".")) || 0);
-const visible = computed(() => order.value.filter((code) => !hidden.value.includes(code)));
+const visible = computed(() => order.value.filter((code) => currencyEditMode.value || !hidden.value.includes(code)));
 const locale = computed(() => language.value === "ru" ? "ru-RU" : "en-US");
 const canShowInstall = computed(() => !isStandalone.value && (isIos || deferredInstallPrompt.value !== null));
 function t(key: keyof typeof copy.en) { return copy[language.value][key]; }
@@ -77,6 +78,9 @@ function clearAmount() {
   selected.value = "USD";
   rawAmount.value = "1";
 }
+function toggleCurrencyEdit() {
+  currencyEditMode.value = !currencyEditMode.value;
+}
 function updateAmount(code: Code, event: Event) {
   const input = event.target as HTMLInputElement;
   const withoutGrouping = groupSeparator.value ? input.value.split(groupSeparator.value).join("") : input.value;
@@ -104,7 +108,9 @@ function toggle(code: Code) {
   const nextHidden = [...hidden.value, code];
   if (code === selected.value) {
     const nextSelected = order.value.find((item) => !nextHidden.includes(item));
-    if (nextSelected) select(nextSelected);
+    if (nextSelected) {
+      select(nextSelected);
+    }
   }
   hidden.value = nextHidden;
 }
@@ -153,8 +159,9 @@ onBeforeUnmount(() => {
     <template v-else-if="rates">
       <p v-if="rates.stale" class="warning">{{ t("stale") }}</p>
       <section class="rows" :aria-label="t('values')">
-        <article v-for="code in visible" :key="code" class="currency-row" :class="{ selected: code === selected }">
-          <span class="code">{{ code }}</span>
+        <div class="rows-toolbar"><button class="currency-edit-toggle" @click="toggleCurrencyEdit">{{ currencyEditMode ? t("done") : t("editCurrencies") }}</button></div>
+        <article v-for="code in visible" :key="code" class="currency-row" :class="{ selected: code === selected, hidden: hidden.includes(code) }">
+          <div class="code-area"><span class="code">{{ code }}</span><span v-if="currencyEditMode" class="row-actions"><button :aria-label="t('moveUp')" @click="move(code, -1)">↑</button><button :aria-label="t('moveDown')" @click="move(code, 1)">↓</button><label class="currency-visibility" :title="t('hide')"><input type="checkbox" :checked="!hidden.includes(code)" :aria-label="t('hide')" @change="toggle(code)"/></label></span></div>
           <input class="amount" type="text" inputmode="decimal" enterkeyhint="enter" :aria-label="t('amount')" :value="code === selected ? displayedRawAmount() : value(code)" @focus="activateInput(code, $event)" @click="activateInput(code, $event)" @input="updateAmount(code, $event)" @keydown.enter.prevent.stop="applyAmount(code, $event)" />
           <span class="name">{{ names[language][code] }}</span>
         </article>

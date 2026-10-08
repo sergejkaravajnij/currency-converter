@@ -12,9 +12,18 @@ header { display: flex; justify-content: space-between; align-items: center; }
 .settings svg circle { fill: #181818; }
 .clear-top { min-width: 84px; border: 0; border-radius: 14px; padding: 10px 24px; color: #e1744e; background: #191919; font-size: 17px; cursor: pointer; }
 .rows { margin-top: 34px; }
+.rows-toolbar { display: flex; justify-content: flex-end; margin: -12px 0 4px; }
+.currency-edit-toggle { border: 0; border-radius: 8px; padding: 6px 10px; color: #aaa; background: #191919; font: inherit; font-size: 13px; cursor: pointer; }
 .currency-row { position: relative; display: grid; grid-template-columns: 1fr auto; width: 100%; min-height: 90px; padding: 12px 0; color: #ddd; border-radius: 14px; }
-.currency-row:focus-within, .currency-row:hover { background: #111; padding-left: 10px; padding-right: 10px; }
+.currency-row:focus-within, .currency-row:hover { background: #111; }
+.currency-row.hidden { opacity: .42; }
+.code-area { align-self: start; display: flex; align-items: center; gap: 8px; }
 .code { align-self: start; font-size: 22px; }
+.row-actions { display: flex; align-items: center; gap: 6px; }
+.row-actions button { width: 30px; height: 30px; padding: 0; border: 0; border-radius: 8px; color: #eee; background: #292929; font-size: 15px; cursor: pointer; }
+.currency-visibility { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: #292929; cursor: pointer; }
+.currency-visibility input { width: 17px; height: 17px; margin: 0; accent-color: #e1744e; }
+.currency-row:has(.row-actions) .amount { width: min(52vw, 340px); }
 .amount { width: min(62vw, 340px); align-self: start; padding: 0; border: 0; outline: 0; color: #ddd; background: transparent; font-size: clamp(28px, 8vw, 39px); font-variant-numeric: tabular-nums; text-align: right; }
 .amount:focus, .selected .amount { color: #e1744e; }
 .name { grid-column: 2; align-self: end; color: #9c9799; font-size: 15px; text-align: right; }
