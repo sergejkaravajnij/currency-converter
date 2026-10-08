@@ -1,0 +1,19 @@
+{
+  "name": "Currency Converter",
+  "short_name": "Converter",
+  "description": "Currency converter with official exchange rates.",
+  "lang": "en",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

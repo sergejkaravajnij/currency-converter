@@ -1,4 +1,4 @@
-export const CURRENCIES = ["USD", "GEL", "RUB", "EUR", "GBP", "PLN", "IDR"] as const;
+export const CURRENCIES = ["USD", "GEL", "RUB", "EUR", "GBP", "PLN", "TRY", "IDR"] as const;
 export type CurrencyCode = (typeof CURRENCIES)[number];
 export type Rates = Record<CurrencyCode, number>;
 

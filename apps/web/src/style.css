@@ -35,6 +35,9 @@ header { display: flex; justify-content: space-between; align-items: center; }
 .format-settings { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .format-settings label { display: grid; gap: 7px; color: #aaa; font-size: 12px; }
 .format-settings select, .language-settings select { width: 100%; padding: 10px; border: 1px solid #3a3a3a; border-radius: 9px; color: #eee; background: #252525; font: inherit; }
+.install-section { display: grid; gap: 10px; }
+.install-section p { margin: 0; }
+.install-button { justify-self: start; min-width: 120px; padding: 10px 16px; border: 0; border-radius: 10px; color: #111; background: #e8794b; font: inherit; font-weight: 650; cursor: pointer; }
 .setting-row { display: flex; justify-content: space-between; align-items: center; min-height: 59px; border-bottom: 1px solid #303030; }
 .setting-row label { display: flex; align-items: center; gap: 10px; cursor: pointer; }
 .setting-row input { width: 17px; height: 17px; accent-color: #e1744e; }

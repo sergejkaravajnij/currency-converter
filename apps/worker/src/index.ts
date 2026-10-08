@@ -16,7 +16,7 @@ function cors(request: Request, env: Env): HeadersInit {
 }
 
 async function fetchNbg(): Promise<string> {
-  const body = `<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><GetCurrentRates xmlns="http://www.nbg.ge/"><Currencies>USD,RUB,EUR,GBP,PLN</Currencies></GetCurrentRates></soap:Body></soap:Envelope>`;
+  const body = `<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><GetCurrentRates xmlns="http://www.nbg.ge/"><Currencies>USD,RUB,EUR,GBP,PLN,TRY</Currencies></GetCurrentRates></soap:Body></soap:Envelope>`;
   const response = await fetch(NBG_URL, { method: "POST", headers: { "Content-Type": "text/xml; charset=utf-8", SOAPAction: "http://www.nbg.ge/GetCurrentRates" }, body });
   if (!response.ok) throw new Error(`NBG returned HTTP ${response.status}`);
   return response.text();
@@ -29,7 +29,7 @@ export async function refreshRates(env: Env, now = new Date()): Promise<RateSnap
   })]);
   const nbg = ratesFromNbg(nbgXml);
   const snapshot: RateSnapshot = {
-    version: 1, baseCurrency: "GEL", rates: { USD: nbg.USD, GEL: 1, RUB: nbg.RUB, EUR: nbg.EUR, GBP: nbg.GBP, PLN: nbg.PLN, IDR: idrToGelFromEcb(ecbCsv, nbg.EUR) },
+    version: 1, baseCurrency: "GEL", rates: { USD: nbg.USD, GEL: 1, RUB: nbg.RUB, EUR: nbg.EUR, GBP: nbg.GBP, PLN: nbg.PLN, TRY: nbg.TRY, IDR: idrToGelFromEcb(ecbCsv, nbg.EUR) },
     effectiveDate: nbg.effectiveDate, fetchedAt: now.toISOString(), source: "National Bank of Georgia + ECB (IDR)", stale: false,
   };
   await env.RATES.put(KEY, JSON.stringify(snapshot));
